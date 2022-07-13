@@ -25,7 +25,3 @@ Grump — Today at 20:02
 **gspread**
 
 ```pip install gspread```
-
-**Google OAuth2Client (I actually don't remember if it's part of the project but I will never forget trying to install it 15 times)**
-
-I have absolutely no idea how I managed to accomplish (assuming that at some point I did) the installation of these wretched objects. The installation process and errors I've encountered appear more inaccessible than convolutions of Polish law systems from the perspective of a simple farmer that's never had to look up the meaning of words such as "promulgacja" in their life before.
