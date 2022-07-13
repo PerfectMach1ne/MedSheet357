@@ -1,7 +1,7 @@
 # MedSheet357
 Google Sheets API based app for helping me track when I take my meds
 ## Name origin
-Discord message transcript
+Discord message transcript:
 ```
 Celest1nee◑𝟜 — Today at 20:01
 can you give me a cool number
