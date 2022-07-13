@@ -20,3 +20,8 @@ Grump — Today at 20:02
 * Generalized "med sheet" creator
 * Interface for updating the "med sheet"
 * A mobile app that updates sheets through Python Sheets API
+## What I had to install to make this run
+
+**gspread**
+
+```pip install gspread```
