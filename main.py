@@ -70,4 +70,3 @@ class MedSheet(cmd.Cmd):
 
 if __name__ == "__main__":
     MedSheet().cmdloop()
-# fuck you git
