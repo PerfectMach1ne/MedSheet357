@@ -30,10 +30,24 @@ class MedSheet(cmd.Cmd):
 
     def do_osh(self, line):
         'Manage origin spreadsheet.'
+        worksheet = sh_origin.sheet1
+        dates = worksheet.col_values(map_column('A'))
+        weekdays = worksheet.col_values(map_column('B'))
         if line == 'getincidents':
-            worksheet = sh_origin.sheet1
-            values_list = worksheet.col_values(map_column('Y'))  # The Y column
-            print(values_list)
+            incidents = worksheet.col_values(map_column('Y')) # The Y column/Incidents column
+            for date, weekday, incident in zip(dates, weekdays, incidents):
+                # zip iterates over several iterables in parallel using tuples
+                if date == 'DATE':
+                    print(date, 5*" ", str(weekday).ljust(9, ' '), incident)
+                    continue
+                print(date, weekday.ljust(9, ' '), incident)
+        elif line == 'getiddata' or 'getdata':
+            iddata = worksheet.col_values(map_column('Z')) # The Z column/ID Data column
+            for date, weekday, data in zip(dates, weekdays, iddata):
+                if date == 'DATE':
+                    print(date, 5*" ", weekday.ljust(9, ' '), data)
+                    continue
+                print(date, weekday.ljust(9, ' '), data)
 
     def do_createsh(self, line):
         'Creates a new spreadsheet.'
@@ -52,11 +66,6 @@ class MedSheet(cmd.Cmd):
     def do_exit(self, line):
         'Exit the command line.'
         return True
-
-
-# print(sh_origin.sheet1.get('A1'))
-# print(sh_origin.sheet1.get('C27:E31'))
-# print(sh_origin.sheet1.get('Y53:Y57'))
 
 
 if __name__ == "__main__":
