@@ -16,7 +16,7 @@ Grump — Today at 20:02
 5 and 7
 ```
 ## Current plans
-* Specialized interpreter for my current Google Sheet
+* Specialized interpreter for my current Google Sheet (referred as the "origin sheet")
 * Generalized "med sheet" creator
 * Interface for updating the "med sheet"
 * A mobile app that updates sheets through Python Sheets API
