@@ -49,23 +49,27 @@ def getiddata(printmode):
 
 def validateincidents():
     inclist = getincidents(False)
-    sinclist = list()
+    inclist.pop(0) # Remove the index with redundant label cell data
     for inc in inclist:
-        if inc[0] == 'DATE':
-            continue
-        newtup = inc[0], inc[1], inc[2]
-        sinclist.append(newtup)
-    for sinc in sinclist:
-        rex = re.findall(r"E[1-3]=[0-2]?\d:[0-5]\d|AA=[0-2]?\d:[0-5]\d", sinc[2])
-        print(sinc[0] + " " + str(rex))
+        rex = re.findall(r"E[1-3]=[0-2]?\d:[0-5]\d|AA=[0-2]?\d:[0-5]\d", inc[2])
+        print(inc[0] + " " + str(rex))
 
 
 def validateiddata():
-    datalist = getiddata(False)
+    iddatalist = getiddata(False)
+    iddatalist.pop(0) # Remove the index with redundant label cell data
+    # For the AA meds
+    for data in iddatalist:
+        rex = re.findall(r"A-\d+-\d+CPA", data[2])
+        print(data[0] + " " + str(rex))
+    # For the E meds
+    for data in iddatalist:
+        rex = re.findall(r"E-\d+-\d+EFM", data[2])
+        print(data[0] + " " + str(rex))
 
 
 def getmeds(printmode):
-    # Note: for some reason this extracts a string in a **list in a list**. Example
+    # Note: gspread's get() returns cell data in a matrix, implemented as a list of lists. Example:
     # [['Ibooprofen']]
     worksheet = sh_origin.sheet1
 
@@ -73,7 +77,7 @@ def getmeds(printmode):
         print(worksheet.get("C1")[0][0])
         print(worksheet.get("G1")[0][0])
     else:
-        return worksheet.get("C1:F1"), worksheet.get("G1:H1")
+        return worksheet.get("C1")[0][0], worksheet.get("G1")[0][0]
 
 
 def getmedinfo(printmode):
@@ -82,7 +86,14 @@ def getmedinfo(printmode):
     weekdays = worksheet.col_values(main.map_column('B'))
 
     if printmode:
-        # Note: Might need to hardcode this due to API request limitations (also I know my dose history lol)
+        print("Med: " + str(getmeds(False)[0]))
+        print(12 * '=')
+        # E info here
+        print(12 * '=')
+        print("Med: " + str(getmeds(False)[1]))
+        print(12 * '=')
+        # AA info here
+        print(12 * '=')
         pass
     else:
         print("Do nothing for now")

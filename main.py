@@ -40,7 +40,7 @@ class MedSheet(cmd.Cmd):
                 oshutil.getiddata(True)
         elif sline[0] in {'validateincidents', 'validateinc'}:
             oshutil.validateincidents()
-        elif sline[0] in {'validateiddata' in 'validatedata'}:
+        elif sline[0] in {'validateiddata', 'validatedata'}:
             oshutil.validateiddata()
         elif sline[0] in {'getmeds', 'listmeds'}:
             if len(sline) == 1:
@@ -63,7 +63,6 @@ class MedSheet(cmd.Cmd):
                     return
                 elif choice.lower() == 'n':
                     return
-
             except ValueError:
                 pass
 
