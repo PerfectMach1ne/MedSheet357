@@ -3,3 +3,4 @@ venv/
 .idea/
 pyvenv.cfg
 *.json
+__pycache__/

@@ -71,6 +71,6 @@ class MedSheet(cmd.Cmd):
         'Exit the command line.'
         return True
 
-# fuck you git episode 124812
+
 if __name__ == "__main__":
     MedSheet().cmdloop()
