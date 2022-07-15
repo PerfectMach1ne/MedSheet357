@@ -47,25 +47,32 @@ def getiddata(printmode):
         return datalist
 
 
-def validateincidents():
+def validateincidents(): # TODO: Add printmode arg
     inclist = getincidents(False)
     inclist.pop(0) # Remove the index with redundant label cell data
     for inc in inclist:
-        rex = re.findall(r"E[1-3]=[0-2]?\d:[0-5]\d|AA=[0-2]?\d:[0-5]\d", inc[2])
+        rex = re.findall(r"E[1-3]=P?\(?[0-2]?\d:[0-5]\d\)?|" # Catches E[1-3]=hh:mm
+                         r"AA=P?\(?[0-2]?\d:[0-5]\d\)?|" # Catches AA=hh:mm
+                         # P(hh:mm) means there's uncertainty surrounding this hour of intake
+                         r"E[1-3]=Pr\([0-2]?\d:[0-5]\d-[0-2]?\d:[0-5]\d\)|" # Catches E[1-3]/AA=P(hh:mm)
+                         # P(hh:mm-hh:mm) specifies the time period between which lies the hour of intake
+                         r"AA=Pr\([0-2]?\d:[0-5]\d-[0-2]?\d:[0-5]\d\)", inc[2]) # Catches E[1-3]/AA=Pr(hh:mm-hh:mm)
         print(inc[0] + " " + str(rex))
 
 
-def validateiddata():
+def validateiddata(): # TODO: Add printmode arg
     iddatalist = getiddata(False)
     iddatalist.pop(0) # Remove the index with redundant label cell data
     # For the AA meds
     for data in iddatalist:
         rex = re.findall(r"A-\d+-\d+CPA", data[2])
         print(data[0] + " " + str(rex))
+    # TODO: Put "AA" ID Data in a list/tuple and complete validating it according to getmedinfo()
     # For the E meds
     for data in iddatalist:
         rex = re.findall(r"E-\d+-\d+EFM", data[2])
         print(data[0] + " " + str(rex))
+    # TODO: Put "E" ID Data in a list/tuple and complete validating it according to getmedinfo()
 
 
 def getmeds(printmode):
@@ -88,12 +95,16 @@ def getmedinfo(printmode):
     if printmode:
         print("Med: " + str(getmeds(False)[0]))
         print(12 * '=')
-        # E info here
+        # TODO: E info here
         print(12 * '=')
         print("Med: " + str(getmeds(False)[1]))
         print(12 * '=')
-        # AA info here
+        # TODO: AA info here
         print(12 * '=')
-        pass
     else:
-        print("Do nothing for now")
+        pass
+        # TODO: Return data that can be used by validateincidents()
+
+
+def exportoshtocsv():
+    pass
