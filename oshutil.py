@@ -1,5 +1,5 @@
 # Origin sheet utilities (so specialized for my own old Google Sheet)
-import gspread
+import re
 
 import main
 
@@ -48,11 +48,20 @@ def getiddata(printmode):
 
 
 def validateincidents():
-    print("Do nothing for now")
+    inclist = getincidents(False)
+    sinclist = list()
+    for inc in inclist:
+        if inc[0] == 'DATE':
+            continue
+        newtup = inc[0], inc[1], inc[2]
+        sinclist.append(newtup)
+    for sinc in sinclist:
+        rex = re.findall(r"E[1-3]=[0-2]?\d:[0-5]\d|AA=[0-2]?\d:[0-5]\d", sinc[2])
+        print(sinc[0] + " " + str(rex))
 
 
 def validateiddata():
-    print("Do nothing for now")
+    datalist = getiddata(False)
 
 
 def getmeds(printmode):
@@ -61,8 +70,8 @@ def getmeds(printmode):
     worksheet = sh_origin.sheet1
 
     if printmode:
-        print(worksheet.get("C1:F1"))
-        print(worksheet.get("G1:H1"))
+        print(worksheet.get("C1")[0][0])
+        print(worksheet.get("G1")[0][0])
     else:
         return worksheet.get("C1:F1"), worksheet.get("G1:H1")
 
@@ -73,7 +82,7 @@ def getmedinfo(printmode):
     weekdays = worksheet.col_values(main.map_column('B'))
 
     if printmode:
-        # Note: Might need to hardcore this due to API request limitations (also I know my dose history lol)
+        # Note: Might need to hardcode this due to API request limitations (also I know my dose history lol)
         pass
     else:
         print("Do nothing for now")
