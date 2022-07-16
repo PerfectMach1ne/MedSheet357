@@ -39,9 +39,15 @@ class MedSheet(cmd.Cmd):
             elif len(sline) > 1 and sline[1] in {"--print", "--pr", "--p"}:
                 oshutil.getiddata(True)
         elif sline[0] in {'validateincidents', 'validateinc'}:
-            oshutil.validateincidents()
+            if len(sline) == 1:
+                oshutil.validateincidents(False)
+            elif len(sline) > 1 and sline[1] in {"--print", "--pr", "--p"}:
+                oshutil.validateincidents(True)
         elif sline[0] in {'validateiddata', 'validatedata'}:
-            oshutil.validateiddata()
+            if len(sline) == 1:
+                oshutil.validateiddata(False)
+            elif len(sline) > 1 and sline[1] in {"--print", "--pr", "--p"}:
+                oshutil.validateiddata(True)
         elif sline[0] in {'getmeds', 'listmeds'}:
             if len(sline) == 1:
                 print(oshutil.getmeds(False))
