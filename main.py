@@ -28,7 +28,7 @@ class MedSheet(cmd.Cmd):
     def do_osh(self, line):
         'Manage origin spreadsheet.'
         sline = line.split()
-        if sline[0] == 'getincidents':
+        if sline[0] in {'getincidents', 'getinc'}:
             if len(sline) == 1:
                 oshutil.getincidents(False)
             elif len(sline) > 1 and sline[1] in {"--print", "--pr", "--p"}:
@@ -40,9 +40,9 @@ class MedSheet(cmd.Cmd):
                 oshutil.getiddata(True)
         elif sline[0] in {'validateincidents', 'validateinc'}:
             if len(sline) == 1:
-                oshutil.validateincidents(False)
+                oshutil.validateincidents()
             elif len(sline) > 1 and sline[1] in {"--print", "--pr", "--p"}:
-                oshutil.validateincidents(True)
+                oshutil.validateincidents()
         elif sline[0] in {'validateiddata', 'validatedata'}:
             if len(sline) == 1:
                 oshutil.validateiddata(False)

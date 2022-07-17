@@ -1,6 +1,5 @@
 # Origin sheet utilities (so specialized for my own old Google Sheet)
 import re
-import datetime
 
 import main
 
@@ -48,40 +47,83 @@ def getiddata(printmode):
         return datalist
 
 
-def validateincidents(printmode):
+def validateincidents():
     inclist = getincidents(False)
     inclist.pop(0) # Remove the index with redundant label cell data
-    if printmode:
-        for inc in inclist:
-            rex = re.findall(r"E[1-3]=P?\(?[0-2]?\d:[0-5]\d\)?|"  # Catches E[1-3]=hh:mm and E[1-3]=P(hh:mm)
-                             r"AA=P?\(?[0-2]?\d:[0-5]\d\)?|"  # Catches AA=hh:mm and AA=P(hh:mm)
-                             # P(hh:mm) means there's uncertainty surrounding this hour of intake
-                             r"E[1-3]=Pr\([0-2]?\d:[0-5]\d-[0-2]?\d:[0-5]\d\)|"  # Catches  E[1-3]=Pr(hh:mm-hh:mm)
-                             r"AA=Pr\([0-2]?\d:[0-5]\d-[0-2]?\d:[0-5]\d\)", inc[2])  # Catches AA=Pr(hh:mm-hh:mm)
-            # P(hh:mm-hh:mm) specifies the time period between which lies the hour of intake
-            print(inc[0] + " " + str(rex))
-    else:
-        # TODO: Implement no printmode
-        pass
+    for inc in inclist:
+        rex = re.findall(r"E[1-3]=P?\(?[0-2]?\d:[0-5]\d\)?|"  # Catches E[1-3]=hh:mm and E[1-3]=P(hh:mm)
+                         r"AA=P?\(?[0-2]?\d:[0-5]\d\)?|"  # Catches AA=hh:mm and AA=P(hh:mm)
+                         # P(hh:mm) means there's uncertainty surrounding this hour of intake
+                         r"E[1-3]=Pr\([0-2]?\d:[0-5]\d-[0-2]?\d:[0-5]\d\)|"  # Catches  E[1-3]=Pr(hh:mm-hh:mm)
+                         r"AA=Pr\([0-2]?\d:[0-5]\d-[0-2]?\d:[0-5]\d\)", inc[2])  # Catches AA=Pr(hh:mm-hh:mm)
+                         # P(hh:mm-hh:mm) specifies the time period between which lies the hour of intake
+        print(inc[0] + " " + str(rex))
 
 
 def validateiddata(printmode):
     iddatalist = getiddata(False)
-    iddatalist.pop(0) # Remove the index with redundant label cell data
+    iddatalist.pop(0)  # Remove the index with redundant label cell data
     if printmode:
         # For the AA meds
+        aalist = list()
         for data in iddatalist:
             rex = re.findall(r"A-\d+-\d+CPA", data[2])
+            if len(rex) == 1:
+                aalist.append(rex[0])
             print(data[0] + " " + str(rex))
-        # TODO: Put "AA" ID Data in a list/tuple and complete validating it according to getmedinfo()
         # For the E meds
+        elist = list()
         for data in iddatalist:
             rex = re.findall(r"E-\d+-\d+EFM", data[2])
+            match (len(rex)):
+                case 3:
+                    tup = (rex[0], rex[1], rex[2])
+                    elist.append(tup)
+                case 2:
+                    tup = (rex[0], rex[1])
+                    elist.append(tup)
+                case 1:
+                    tup = (rex[0])
+                    elist.append(tup)
+                case _:
+                    pass
             print(data[0] + " " + str(rex))
-        # TODO: Put "E" ID Data in a list/tuple and complete validating it according to getmedinfo()
     else:
-        # TODO: Implement no printmode
-        pass
+        medinfo = getmedinfo(False)
+        # For the AA meds
+        aalist = list()
+        for data in iddatalist:
+            rex = re.findall(r"A-\d+-\d+CPA", data[2])
+            if len(rex) == 1:
+                tup = (data[0], rex[0])
+                aalist.append(tup)
+        aadosagedata = medinfo[1]
+        aa_i = 0
+        for i in range(0, len(aadosagedata)):
+            if aadosagedata[0] < aalist[aa_i][0] < aadosagedata[1]:
+                if aadosagedata[2] == '*':
+                    pass
+                elif aadosagedata[2] == '/':
+                    pass
+        # For the E meds
+        elist = list()
+        for data in iddatalist:
+            rex = re.findall(r"E-\d+-\d+EFM", data[2])
+            match (len(rex)):
+                case 3:
+                    tup = (data[0], rex[0], rex[1], rex[2])
+                    elist.append(tup)
+                case 2:
+                    tup = (data[0], rex[0], rex[1])
+                    elist.append(tup)
+                case 1:
+                    tup = (data[0], rex[0])
+                    elist.append(tup)
+                case _:
+                    pass
+        edosagedata = medinfo[0]
+        for i in range(0, len(edosagedata)):
+            pass
 
 
 def getmeds(printmode):
@@ -105,27 +147,37 @@ def getmedinfo(printmode):
         print(12 * '=')
         print('Date'.ljust(10, ' '), 'Weekday'.ljust(9, ' '), "E  ", "AA")
         for date, weekday in zip(dates, weekdays):
-            tmpstr = date.split('/')
-            if tmpstr[0] == 'DATE':
+            datetup = date.split('/')
+            if datetup[0] == 'DATE':
                 continue
-            if tmpstr[2] == '2022' and tmpstr[1] == '05' and (int(tmpstr[0]) in range(1, 14 + 1)):
-                if int(tmpstr[0]) in range(1, 6 + 1):
+            if datetup[2] == '2022' and datetup[1] == '05' and (int(datetup[0]) in range(1, 14 + 1)):
+                if int(datetup[0]) in range(1, 6 + 1):
                     print(date, weekday.ljust(9, ' '), "n/a", end='')
-                elif int(tmpstr[0]) in range(7, 10 + 1):
+                elif int(datetup[0]) in range(7, 10 + 1):
                     print(date, weekday.ljust(9, ' '), "×1", end='')
-                elif int(tmpstr[0]) in range(11, 14 + 1):
+                elif int(datetup[0]) in range(11, 14 + 1):
                     print(date, weekday.ljust(9, ' '), "×2", end='')
             else:
                 print(date, weekday.ljust(9, ' '), "×3", end='')
 
-            if tmpstr[2] == '2022' and tmpstr[1] == '05' and (int(tmpstr[0]) in range(1, 7 + 1)):
+            if datetup[2] == '2022' and datetup[1] == '05' and (int(datetup[0]) in range(1, 7 + 1)):
                 print(" ÷4")
             else:
                 print(" ÷2")
         print(12 * '=')
     else:
-        pass
-        # TODO: Return data that can be used by validateincidents()
+        medinfo = list()
+        medinfo.append([
+            ((5, 1), (5, 6), '*0'),  # Format: tuple = (month, day)
+            ((5, 7), (5, 10), '*1'),
+            ((5, 11), (5, 14), '*2'),
+            ((5, 15), (999, 999), '*3')  # (999, 999) represents no end date
+        ])
+        medinfo.append([
+            ((5, 1), (5, 7), '/4'),
+            ((5, 8), (999, 999), '/2')
+        ])
+        return medinfo
 
 
 def exportoshtocsv():
